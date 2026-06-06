@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>David T. Wa Tshitenda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161d;
+      --border: #1e2330;
+      --accent: #4af0a0;
+      --accent2: #4a9cf0;
+      --text: #e8eaf0;
+      --muted: #7a8099;
+      --tag-bg: #1a2035;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px 48px;
+      background: rgba(13, 15, 20, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav a {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active { color: var(--accent); }
+
+    /* ── HERO / LANDING ── */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle grid background */
+    #home::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* radial glow */
+    #home::after {
+      content: '';
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(74,240,160,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-greeting {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 9vw, 6.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: #fff;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    .hero-name span { color: var(--accent); }
+
+    .hero-role {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.6s;
+    }
+
+    .hero-counter {
+      margin-top: 32px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.8s;
+    }
+
+    .hero-counter span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .hero-cta {
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1s;
+    }
+
+    .btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0f14;
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary:hover { background: #2ed882; border-color: #2ed882; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.2s;
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 1px solid var(--muted);
+      border-bottom: 1px solid var(--muted);
+      transform: rotate(45deg);
+      animation: bounce 1.6s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(4px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ABOUT SECTION ── */
+    #about {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 48px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESUME SECTION ── */
+    #resume {
+      border-top: 1px solid var(--border);
+      padding-bottom: 80px;
+    }
+
+    /* ── SHARED RESUME STYLES (same as before) ── */
+    .resume-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 48px 0;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 48px 56px;
+    }
+
+    .left { grid-column: 1; }
+    .right { grid-column: 2; }
+
+    section { margin-bottom: 48px; }
+
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .resume-header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 48px 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 24px;
+    }
+
+    .resume-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .resume-name span { color: var(--accent); }
+
+    .resume-role {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .contacts a { color: var(--accent2); text-decoration: none; }
+    .contacts a:hover { text-decoration: underline; }
+
+    .summary { color: #b0b8cc; font-size: 13px; line-height: 1.85; }
+
+    .entry { margin-bottom: 36px; }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .entry-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .entry-org { font-size: 12px; color: var(--accent2); margin-bottom: 10px; }
+    .entry-date { font-size: 11px; color: var(--muted); white-space: nowrap; padding-top: 3px; }
+
+    .entry ul { list-style: none; padding: 0; }
+
+    .entry ul li {
+      position: relative;
+      padding-left: 16px;
+      color: #a8b0c4;
+      font-size: 12.5px;
+      margin-bottom: 7px;
+    }
+
+    .entry ul li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
+
+    .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+    .tag {
+      background: var(--tag-bg);
+      color: var(--accent2);
+      font-size: 10.5px;
+      padding: 3px 9px;
+      border-radius: 3px;
+      border: 1px solid #1e2d4a;
+      letter-spacing: 0.03em;
+    }
+
+    .tag.green { color: var(--accent); border-color: #1a3a2a; background: #121f18; }
+
+    .gh-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 8px;
+      border: 1px solid #1a3a2a;
+      background: #121f18;
+      padding: 4px 10px;
+      border-radius: 3px;
+    }
+
+    .gh-link:hover { background: #1a2f20; }
+
+    .sidebar-block { margin-bottom: 40px; }
+
+    .cert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12.5px;
+      color: #b0b8cc;
+    }
+
+    .cert-badge {
+      width: 20px; height: 20px;
+      background: var(--accent);
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .cert-badge svg { width: 12px; height: 12px; fill: #0d0f14; }
+
+    .skill-group { margin-bottom: 18px; }
+
+    .skill-group-name {
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .pill {
+      background: var(--tag-bg);
+      color: #c0c8dc;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+    }
+
+    .edu-title { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: #fff; line-height: 1.4; }
+    .edu-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 48px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 720px) {
+      nav { gap: 20px; padding: 16px 24px; }
+      .resume-header { grid-template-columns: 1fr; padding: 40px 24px 32px; }
+      .contacts { align-items: flex-start; }
+      .resume-wrap { grid-template-columns: 1fr; padding: 32px 24px 0; gap: 0; }
+      .right { grid-column: 1; }
+      #about { padding: 80px 24px; }
+      footer { padding: 20px 24px; flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#home" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#resume">Resume</a>
+  </nav>
+
+  <!-- HERO / HOME -->
+  <section id="home">
+    <div class="hero-greeting">// Hello, world</div>
+    <div class="hero-name">Hi, I'm <span>David</span></div>
+    <div class="hero-role">Security &amp; Infrastructure · Azure · Cloud Security</div>
+    <div class="hero-counter">This page has been viewed <span id="visit-count">—</span> times</div>
+    <div class="hero-cta">
+      <a href="#resume" class="btn btn-primary">View Resume</a>
+      <a href="https://github.com/davidtshitenda" target="_blank" class="btn btn-secondary">GitHub</a>
+    </div>
+    <div class="scroll-hint">
+      <span>SCROLL</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">About</div>
+    <p class="summary" style="max-width:640px; font-size:14px; line-height:2;">
+      I'm a Security &amp; Infrastructure Operations Technician at Microsoft South Africa with four years of hands-on experience in enterprise-scale Azure environments. I hold CompTIA Security+ and AZ-900, and I'm actively working through AZ-104.<br/><br/>
+      My background spans infrastructure operations, identity &amp; access management, security fundamentals, and cloud governance. I'm building toward a role in Azure administration and cloud security — this site is part of that journey, built as part of the Cloud Resume Challenge.
+    </p>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume">
+
+    <div class="resume-header">
+      <div>
+        <div class="resume-name">David T. <span>Wa Tshitenda</span></div>
+        <div class="resume-role">Security &amp; Infrastructure Operations · Azure · Cloud Security</div>
+      </div>
+      <div class="contacts">
+        <span>078 547 8639</span>
+        <a href="mailto:tshitenda.d@gmail.com">tshitenda.d@gmail.com</a>
+        <span>Parow, Cape Town</span>
+        <a href="https://github.com/davidtshitenda" target="_blank">github.com/davidtshitenda</a>
+      </div>
+    </div>
+
+    <div class="resume-wrap">
+      <div class="left">
+
+        <section>
+          <div class="section-label">Profile</div>
+          <p class="summary">
+            Currently employed at Microsoft South Africa with four years of hands-on Azure and cloud infrastructure experience in a production enterprise environment. I hold CompTIA Security+ and AZ-900, and I'm actively working through AZ-104. My background spans infrastructure operations, security fundamentals, and operational governance.
+          </p>
+        </section>
+
+        <section>
+          <div class="section-label">Experience</div>
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-title">Security &amp; Infrastructure Operations Technician</div>
+              <div class="entry-date">2021 – Present</div>
+            </div>
+            <div class="entry-org">Microsoft 1968 South Africa Pty Ltd — Cape Town &nbsp;·&nbsp; Ref: Jerome Andrews 083 650 5451</div>
+            <ul>
+              <li>Handle secure destruction of data-bearing devices to Microsoft's global security and compliance standards — chain of custody documented, fully audit-ready at all times.</li>
+              <li>Contributed to Zero Trust network migration and other High Business Impact (HBI) security initiatives — developed a practical feel for how security operates inside a large enterprise.</li>
+              <li>Shadowed Data Centre Technicians for an extended period — hands-on with physical server installation, hardware diagnostics, and rack management across Microsoft's Cape Town facilities.</li>
+              <li>Manage secure hardware asset lifecycle through Microsoft's GDCO system — tagging, serial tracking, and audit documentation across sensitive enterprise infrastructure.</li>
+              <li>Work regularly across engineering, security, and operations teams — comfortable translating between technical and non-technical stakeholders.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-label">Projects</div>
+
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-title">Azure Cloud Infrastructure &amp; Security Lab</div>
+              <div class="entry-date">Independent</div>
+            </div>
+            <div class="entry-org">Azure · Entra ID · RBAC · Conditional Access · Log Analytics · PowerShell</div>
+            <ul>
+              <li>Built a full Azure environment from scratch — deployed VMs, configured VNets and NSGs, set up Log Analytics workspaces, and wired Data Collection Rules via portal and PowerShell.</li>
+              <li>Implemented identity and access controls — configured RBAC, Conditional Access policies, and managed user accounts through Entra ID.</li>
+              <li>Diagnosed and resolved a real configuration failure: Azure Monitor Agent wouldn't install due to a workspace/VM region mismatch. Isolated the root cause and resolved it systematically.</li>
+              <li>Integrated Microsoft Sentinel and Defender XDR — configured alert rules, investigated live incidents, and maintained the environment's security posture throughout.</li>
+            </ul>
+            <a class="gh-link" href="https://github.com/davidtshitenda/Azure-SOC-Honeynet-Lab" target="_blank">&#128279; github.com/davidtshitenda/Azure-SOC-Honeynet-Lab</a>
+          </div>
+
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-title">Zero Trust Network Migration — CPT20</div>
+              <div class="entry-date">Nov 2025</div>
+            </div>
+            <div class="entry-org">Microsoft Data Centre Operations · HBI Security Initiative</div>
+            <ul>
+              <li>Delivered critical logistics support for a High Business Impact security migration, ensuring timely delivery and readiness of ZTN components for CPT20.</li>
+              <li>Coordinated change freeze compliance by tracking updates and communicating dependencies across cross-functional teams.</li>
+            </ul>
+            <div class="project-tags">
+              <span class="tag green">Zero Trust</span><span class="tag green">HBI</span><span class="tag">Cross-functional</span>
+            </div>
+          </div>
+
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-title">NVIDIA H100 GPU Cluster Deployment — CPT21</div>
+              <div class="entry-date">Nov 2025</div>
+            </div>
+            <div class="entry-org">Microsoft Data Centre Operations</div>
+            <ul>
+              <li>Managed end-to-end logistics for the H100 GPU cluster deployment — receipt, staging, tracking, and availability aligned to engineering schedules.</li>
+              <li>Coordinated inbound receipt of NVIDIA H100 GPUs and InfiniBand switches, proactively escalating hold-ship risks to prevent deployment delays.</li>
+            </ul>
+            <div class="project-tags"><span class="tag">AI Infrastructure</span><span class="tag">Deployment Logistics</span></div>
+          </div>
+
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-title">Secure Data Decommissioning — CPT20</div>
+              <div class="entry-date">Nov 2025</div>
+            </div>
+            <div class="entry-org">Microsoft Data Centre Operations</div>
+            <ul>
+              <li>Led secure decommissioning of data-bearing devices, ensuring full compliance with destruction protocols across cross-functional teams.</li>
+            </ul>
+            <div class="project-tags"><span class="tag green">Compliance</span><span class="tag green">Data Security</span></div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="right">
+
+        <div class="sidebar-block">
+          <div class="section-label">Education</div>
+          <div class="edu-title">Diploma in ICT — Networking Specialisation</div>
+          <div class="edu-sub">Cape Peninsula University of Technology<br/>2018 – 2022</div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="section-label">Certifications</div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg viewBox="0 0 12 12"><path d="M5 9L2 6l1-1 2 2 4-4 1 1z"/></svg></div>
+            <span>CompTIA Security+</span>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg viewBox="0 0 12 12"><path d="M5 9L2 6l1-1 2 2 4-4 1 1z"/></svg></div>
+            <span>Microsoft Azure Fundamentals (AZ-900)</span>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg viewBox="0 0 12 12"><path d="M5 9L2 6l1-1 2 2 4-4 1 1z"/></svg></div>
+            <span>Fortinet NSE 1</span>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg viewBox="0 0 12 12"><path d="M5 9L2 6l1-1 2 2 4-4 1 1z"/></svg></div>
+            <span>Fortinet NSE 2</span>
+          </div>
+          <div class="cert-item" style="opacity:0.5;">
+            <div class="cert-badge" style="background:#1e2330;"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="3" fill="#4af0a0"/></svg></div>
+            <span>AZ-104 — In progress</span>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="section-label">Technical Skills</div>
+          <div class="skill-group">
+            <div class="skill-group-name">Azure &amp; Cloud</div>
+            <div class="skill-pills">
+              <span class="pill">Azure Portal</span><span class="pill">VNets</span><span class="pill">NSGs</span>
+              <span class="pill">Log Analytics</span><span class="pill">Azure Monitor</span><span class="pill">Bastion</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-name">Identity &amp; Security</div>
+            <div class="skill-pills">
+              <span class="pill">Entra ID</span><span class="pill">RBAC</span><span class="pill">Conditional Access</span>
+              <span class="pill">MFA</span><span class="pill">Zero Trust</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-name">Security Ops</div>
+            <div class="skill-pills">
+              <span class="pill">Sentinel</span><span class="pill">Defender XDR</span><span class="pill">KQL</span><span class="pill">DCR</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-name">M365</div>
+            <div class="skill-pills">
+              <span class="pill">M365 Admin</span><span class="pill">Exchange Online</span><span class="pill">Intune</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-name">Automation</div>
+            <div class="skill-pills">
+              <span class="pill">PowerShell</span><span class="pill">MS Graph</span><span class="pill">GitHub Actions</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="section-label">Competencies</div>
+          <div class="skill-pills" style="gap:6px;">
+            <span class="tag green">Azure Infrastructure</span>
+            <span class="tag green">IAM</span>
+            <span class="tag green">Zero Trust</span>
+            <span class="tag">Governance &amp; Compliance</span>
+            <span class="tag">Endpoint Management</span>
+            <span class="tag">PowerShell Automation</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>David T. Wa Tshitenda &nbsp;·&nbsp; tshitenda.d@gmail.com</span>
+    <span>Cape Town, South Africa</span>
+  </footer>
+
+  <script>
+    // Smooth nav active state on scroll
+    const sections = document.querySelectorAll('section[id], #home');
+    const navLinks = document.querySelectorAll('nav a');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.remove('active'));
+          const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+
+    // ── VISITOR COUNTER ──
+    // Calls Azure Function → Function reads/increments count in Cosmos DB → returns JSON
+    // Replace YOUR_FUNCTION_URL_HERE with your actual Azure Function URL in CRC step 9
+
+    const FUNCTION_URL = 'https://crc-counter-api.azurewebsites.net/api/HttpTrigger';
+
+    async function getVisitorCount() {
+      const countEl = document.getElementById('visit-count');
+
+      try {
+        const response = await fetch(FUNCTION_URL);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        countEl.textContent = data.count;
+
+      } catch (error) {
+        // Function URL not yet configured — show placeholder
+        countEl.textContent = '—';
+        console.log('Visitor counter not yet connected:', error.message);
+      }
+    }
+
+    getVisitorCount();
+  </script>
+
+</body>
+</html>
