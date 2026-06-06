@@ -1,0 +1,14 @@
+# Local settings — contains secrets, never commit these
+crc-api/local.settings.json
+crc-api-python/local.settings.json
+
+# Node modules — too large, restored via npm install
+crc-api/node_modules/
+
+# Python virtual environments
+__pycache__/
+*.pyc
+.python_packages/
+
+# VS Code
+.vscode/
