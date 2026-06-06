@@ -2,12 +2,12 @@
 # Frontend CI/CD Workflow — Static Website (Azure Blob Storage)
 # ============================================================
 # Triggers: any push to main that changes files in frontend/
+#           or manually from the GitHub Actions UI
 # What it does:
 #   1. Checks out your code
 #   2. Logs into Azure using your service principal
 #   3. Uploads index.html to the $web container in blob storage
-#   4. Purges the Azure Front Door cache so visitors see the
-#      updated site immediately instead of cached old version
+#   4. Purges the Azure Front Door cache
 # ============================================================
 
 name: Deploy Frontend to Azure Storage
@@ -17,7 +17,8 @@ on:
     branches:
       - main
     paths:
-      - 'frontend/**'    # Only runs when frontend files change
+      - 'frontend/**'          # Only runs when frontend files change
+  workflow_dispatch:            # Enables manual trigger from GitHub Actions UI
 
 jobs:
   deploy-frontend:
@@ -26,20 +27,14 @@ jobs:
 
     steps:
 
-      # Step 1 — Check out the repo code onto the runner
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2 — Log into Azure using the service principal credentials
       - name: Login to Azure
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 3 — Upload all files from frontend/ to the $web container
-      # $web is the special container Azure creates for static website hosting
-      # --overwrite replaces existing files
-      # --content-type ensures browsers receive correct MIME type for HTML
       - name: Upload frontend to blob storage
         uses: azure/CLI@v2
         with:
@@ -52,11 +47,6 @@ jobs:
               --overwrite true \
               --content-type 'text/html'
 
-      # Step 4 — Purge Azure Front Door cache
-      # Front Door caches your HTML at edge nodes globally.
-      # Without purging, visitors may see the old cached version
-      # for hours even after you've deployed a new file.
-      # This forces all edge nodes to fetch the latest version.
       - name: Purge Front Door cache
         uses: azure/CLI@v2
         with:
@@ -68,7 +58,6 @@ jobs:
               --domains www.davidtshitenda.co.za \
               --content-paths '/*'
 
-      # Step 5 — Log out of Azure
       - name: Logout of Azure
         run: az logout
         if: always()
