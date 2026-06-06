@@ -39,7 +39,7 @@ jobs:
         with:
           inlineScript: |
             cd crc-api-python
-            zip -r ../function.zip .
+            python3 -m zipfile -c ../function.zip .
             az functionapp deployment source config-zip \
               --resource-group crc-staticwebapp \
               --name crc-counter-api-python \
