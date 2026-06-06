@@ -1,16 +1,3 @@
-# ============================================================
-# Backend CI/CD Workflow — Python Azure Function
-# ============================================================
-# Triggers: any push to main that changes files in crc-api-python/
-#           or manually from the GitHub Actions UI
-# What it does:
-#   1. Checks out your code
-#   2. Sets up Python 3.12
-#   3. Installs dependencies from requirements.txt
-#   4. Logs into Azure using your service principal
-#   5. Deploys the Function to crc-counter-api-python
-# ============================================================
-
 name: Deploy Python Function App
 
 on:
@@ -18,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'crc-api-python/**'   # Only runs when Python Function files change
-  workflow_dispatch:           # Enables manual trigger from GitHub Actions UI
+      - 'crc-api-python/**'
+  workflow_dispatch:
 
 jobs:
   deploy-function:
@@ -47,14 +34,18 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Python Function App
-        uses: Azure/functions-action@v1
+      - name: Deploy via Azure CLI
+        uses: azure/CLI@v2
         with:
-          app-name: crc-counter-api-python
-          package: crc-api-python
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          inlineScript: |
+            cd crc-api-python
+            zip -r ../function.zip .
+            az functionapp deployment source config-zip \
+              --resource-group crc-staticwebapp \
+              --name crc-counter-api-python \
+              --src ../function.zip
 
       - name: Logout of Azure
         run: az logout
         if: always()
+        
